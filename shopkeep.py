@@ -21,10 +21,10 @@ def inventory():
 
 
 def town():
-    print "It's a quiet day in town, do you go to the shopkeep, the apple seller, the castle or open your inventory?"
     while True:
         choice = raw_input("> ")
         if "shopkeep" in choice:
+            print "'Welcome, stranger'"
             shopkeep()
         elif "apple" in choice:
             appleseller()
@@ -40,43 +40,80 @@ def town():
 
 
 def shopkeep():
-    print "Welcome stranger"
     while True:
         choice = raw_input("> ")
         if choice == "help":
             print "list: lists the items for sale"
-            print "value <argument>: gives the sell value for given item"
-            print "sell <item> <quantity>: sells the given item in given quantity from your inventory"
-            print "buy <item> <quantity>: buys the given item in given quantity from the shop"
-        elif choice == "list":
+            print "sell <quantity> <item>: sells the given item in given quantity from your inventory"
+            print "buy <quantity> <item>: buys the given item in given quantity from the shop"
+
+        elif "list" in choice:
             for item in shopkeepinventory:
                 if shopkeepinventory[item] == 1:
-                    print shopkeepinventory[item], singular[item] + ", price:", int(round(value[item]*1.3))
+                    singleorplural = singular[item]
                 else:
-                    print shopkeepinventory[item], plural[item] + ", price:", int(round(value[item]*1.3))
-        elif choice == "inventory":
+                    singleorplural = plural[item]
+                print shopkeepinventory[item], singleorplural + ", price:", int(round(value[item]*1.3)), "gold"
+
+        elif "inventory" in choice:
             inventory()
+
         elif "sell" in choice:
             splitchoice = choice.split(' ')
             if len(splitchoice) == 3:
-                item = splitchoice[1]
-                amount = splitchoice[2]
-                try:
-
-                    pass
-                except KeyError:
-                    print "Error: invalid arguments"
-                global playercash
-
-                print playercash
+                sell(splitchoice[1], splitchoice[2])
             elif len(splitchoice) < 3:
                 print "Error: not enough arguments"
             else:
                 print "Error: too many arguments"
-        elif "bye" or "leave" in choice:
+
+        elif "buy" in choice:
+            pass
+
+        elif "bye" in choice or "leave" in choice:
+            print "'Safe travels!'"
             town()
+
         else:
-            print "Ehh can't say I know what you're tryin' to say, stranger."
+            print "'Ehh can't say I know what you're tryin' to say, stranger.'"
+
+
+def sell(amount, item):
+    try:
+        intamount = int(amount)
+        enoughitems = (playerinventory[item] >= intamount)
+    except KeyError:
+        print "Error: item does not exist"
+    except ValueError:
+        print "Error: the second argument must be a number"
+
+    else:
+        if enoughitems:
+            total = int(round(value["rope"]*0.7))*intamount
+
+            if intamount == 1:
+                singleorplural = singular[item]
+
+            else:
+                singleorplural = plural[item]
+
+            print "%d %s eh? I can give you %d gold for that. Deal?" % (intamount, singleorplural, total)
+            answer = raw_input("> ")
+
+            if "yes" in answer or "Yes" in answer:
+                print "'Alright, it's a deal.'"
+                global playercash
+                playercash += total
+                playerinventory[item] -= intamount
+                shopkeepinventory[item] += intamount
+                print "Lost %d %s. Got %d gold." % (intamount, singleorplural, total)
+                print "'Anything else ya need?'"
+
+            else:
+                print "'Alright, then. No deal it is.'"
+
+        else:
+            print "Error: you do not have enough of the selected item"
 
 
 def appleseller():
@@ -86,7 +123,10 @@ def appleseller():
 def castle():
     pass
 
+print "It's a quiet day in town, do you go to the shopkeep, the apple seller, the castle or open your inventory?"
 town()
+
+
 
 
 
