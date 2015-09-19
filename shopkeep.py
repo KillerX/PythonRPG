@@ -61,7 +61,7 @@ def shopkeep():
             if len(splitchoice) == 3:
                 item = splitchoice[1]
                 amount = splitchoice[2]
-                try:ssss
+                try:
 
                     pass
                 except KeyError:
