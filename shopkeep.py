@@ -5,13 +5,14 @@ global playercash
 playercash = 200
 value = {"apple": 10, "rope": 20, "bedroll": 100, "bomb": 30}
 playerinventory = {"apple": 3, "rope": 7, "bedroll": 1, "bomb": 0}
-shopkeepinventory = {"bomb": 20, "rope": 1}
+shopkeepinventory = {"apple": 0, "rope": 30, "bedroll": 3, "bomb": 20}
 
 singular = {"bomb": "Bomb", "apple": "Apple", "bedroll": "Bedroll", "rope": "Rope"}
 plural = {"bomb": "Bombs", "apple": "Apples", "bedroll": "Bedrolls", "rope": "Ropes"}
 
 
 def inventory():
+    global playercash
     for item in playerinventory:
         if playerinventory[item] == 1:
             print singular[item] + ":", playerinventory[item]
@@ -53,7 +54,10 @@ def shopkeep():
                     singleorplural = singular[item]
                 else:
                     singleorplural = plural[item]
-                print shopkeepinventory[item], singleorplural + ", price:", int(round(value[item]*1.3)), "gold"
+                if shopkeepinventory[item] == 0:
+                    pass
+                else:
+                    print shopkeepinventory[item], singleorplural + ", price:", int(round(value[item]*1.3)), "gold"
 
         elif "inventory" in choice:
             inventory()
@@ -68,7 +72,13 @@ def shopkeep():
                 print "Error: too many arguments"
 
         elif "buy" in choice:
-            pass
+            splitchoice = choice.split(' ')
+            if len(splitchoice) == 3:
+                buy(splitchoice[1], splitchoice[2])
+            elif len(splitchoice) < 3:
+                print "Error: not enough arguments"
+            else:
+                print "Error: too many arguments"
 
         elif "bye" in choice or "leave" in choice:
             print "'Safe travels!'"
@@ -89,7 +99,7 @@ def sell(amount, item):
 
     else:
         if enoughitems:
-            total = int(round(value["rope"]*0.7))*intamount
+            total = int(round(value[item]*0.7))*intamount
 
             if intamount == 1:
                 singleorplural = singular[item]
@@ -100,7 +110,7 @@ def sell(amount, item):
             print "%d %s eh? I can give you %d gold for that. Deal?" % (intamount, singleorplural, total)
             answer = raw_input("> ")
 
-            if "yes" in answer or "Yes" in answer:
+            if "yes" in answer.lower() or "deal" in answer.lower():
                 print "'Alright, it's a deal.'"
                 global playercash
                 playercash += total
@@ -116,14 +126,56 @@ def sell(amount, item):
             print "Error: you do not have enough of the selected item"
 
 
+def buy(amount, item):
+    global playercash
+    try:
+        intamount = int(amount)
+        enoughitems = (shopkeepinventory[item] >= intamount)
+        total = int(round(value[item]*1.3))*intamount
+        enoughmoney = playercash >= total
+    except KeyError:
+        print "Error: item does not exist"
+    except ValueError:
+        print "Error: the second argument must be a number"
+
+    else:
+        if enoughitems and enoughmoney:
+
+            if intamount == 1:
+                singleorplural = singular[item]
+
+            else:
+                singleorplural = plural[item]
+
+            print "'%d %s eh? I'll need %d gold for that. Deal?'" % (intamount, singleorplural, total)
+            answer = raw_input("> ")
+
+            if "yes" in answer.lower() or "deal" in answer.lower():
+                print "'Alright, it's a deal.'"
+                playercash -= total
+                playerinventory[item] += intamount
+                shopkeepinventory[item] -= intamount
+                print "Lost %d gold. Got %d %s." % (total, intamount, singleorplural)
+                print "'Anything else ya need?'"
+
+            else:
+                print "'Alright, then. No deal it is.'"
+        elif not enoughmoney:
+            print "Error: you do not have enough money."
+        else:
+            print "Error: the shop does not have enough of the selected item"
+
+
 def appleseller():
-    pass
+    print "The apple seller seems to be out."
+    town()
 
 
 def castle():
-    pass
+    print "There is nothing interesting here. For now."
+    town()
 
-print "It's a quiet day in town, do you go to the shopkeep, the apple seller, the castle or open your inventory?"
+#  print "It's a quiet day in town, do you go to the shopkeep, the apple seller, the castle or open your inventory?"
 town()
 
 
