@@ -51,9 +51,9 @@ def shopkeep():
         elif "list" in choice:
             for item in shopkeepinventory:
                 if shopkeepinventory[item] == 1:
-                    singleorplural = singular[item]
+                    singleorplural = singular[item].lower()
                 else:
-                    singleorplural = plural[item]
+                    singleorplural = plural[item].lower()
                 if shopkeepinventory[item] == 0:
                     pass
                 else:
@@ -102,10 +102,10 @@ def sell(amount, item):
             total = int(round(value[item]*0.7))*intamount
 
             if intamount == 1:
-                singleorplural = singular[item]
+                singleorplural = singular[item].lower()
 
             else:
-                singleorplural = plural[item]
+                singleorplural = plural[item].lower()
 
             print "%d %s eh? I can give you %d gold for that. Deal?" % (intamount, singleorplural, total)
             answer = raw_input("> ")
@@ -142,10 +142,10 @@ def buy(amount, item):
         if enoughitems and enoughmoney:
 
             if intamount == 1:
-                singleorplural = singular[item]
+                singleorplural = singular[item].lower()
 
             else:
-                singleorplural = plural[item]
+                singleorplural = plural[item].lower()
 
             print "'%d %s eh? I'll need %d gold for that. Deal?'" % (intamount, singleorplural, total)
             answer = raw_input("> ")
@@ -175,7 +175,7 @@ def castle():
     print "There is nothing interesting here. For now."
     town()
 
-#  print "It's a quiet day in town, do you go to the shopkeep, the apple seller, the castle or open your inventory?"
+print "It's a quiet day in town, do you go to the shopkeep, the apple seller, the castle or open your inventory?"
 town()
 
 
